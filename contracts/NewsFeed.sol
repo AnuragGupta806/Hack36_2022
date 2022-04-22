@@ -1,4 +1,5 @@
-pragma solidity 0.8.7;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.4.21 <8.10.0;
 
 contract NewsFeed
 {   
@@ -9,7 +10,7 @@ contract NewsFeed
     enum State { Unverified, Fake, Verified }
     enum Role { Reader, Validator, Publisher }
     mapping(uint256=>News) public news_feed;
-    mapping(address => mapping(Role => bool)) accountRoles;
+    mapping(address => mapping(uint => bool)) accountRoles;
     address public creator;
     mapping(address => News) assignedArticle; //stores mapping of what articles is assigned to each validator at a given moment
     address[] freeValidators; //list of validators who have are idle
@@ -18,7 +19,7 @@ contract NewsFeed
         require(
             msg.sender == creator
         );
-        accountRoles[account][role] = true;
+        accountRoles[account][uint(role)] = true;
 
         if(role == Role.Validator) {
             freeValidators.push(account);
@@ -27,7 +28,7 @@ contract NewsFeed
 
     function accountHasRole(address account, Role role) internal 
     view returns (bool) { //checks whether account has specified role
-        return accountRoles[account][role];
+        return accountRoles[account][uint(role)];
     }
 
     struct News{
@@ -43,7 +44,7 @@ contract NewsFeed
         uint256 reportCount;
     }
 
-    constructor() { //called when contract is first created
+    constructor() public { //called when contract is first created
         creator = msg.sender;
     }
 

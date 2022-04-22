@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.21 <8.10.0;
 
-contract NewsFeed
+contract NewsFeeds
 {
     uint256 public newsCount=0;
     enum State { Unverified, Fake, Verified }
