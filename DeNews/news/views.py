@@ -70,14 +70,18 @@ def home(request):
     news_feed=news_feed[0]
     print(news_feed)
     # for i in range(news_count):
+    role = []
+     
 
     context['acc_tx'] = acc_tx_receipt
     context['news_tx'] = tx_receipt
     context['news_count'] = news_count
     context['news_feed'] = news_feed
+    context['news_role'] 
     if(request.method=="POST"):
         title=request.POST.get('title')
         description=request.POST.get('description')
-        print(title,description)
+        news.functions.addNews(title,description).transact(transaction={'from': web3.eth.accounts[1],"value": 5})
+        return render(request,'home.html',context)
     return render(request,'home.html',context)
 
