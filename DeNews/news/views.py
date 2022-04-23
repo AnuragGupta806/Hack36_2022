@@ -1,5 +1,5 @@
-import imp
-from django.shortcuts import render
+from audioop import add
+from django.shortcuts import redirect, render
 import json
 from web3 import Web3
 from solcx import compile_standard, install_solc
@@ -51,6 +51,31 @@ news_tx_hash = NewsContract.constructor(acc_tx_receipt.contractAddress).transact
 tx_receipt = web3.eth.wait_for_transaction_receipt(news_tx_hash)
 
 
+
+
+
+def index(request):
+    if request.method=="POST":
+        address = request.POST.get('address')
+        news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+        account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+        is_reader = account.functions.accountHasRole(address,0).call()
+        is_validator = account.functions.accountHasRole(address,1).call()
+        is_publisher = account.functions.accountHasRole(address,2).call()
+
+        if(is_reader):
+            return redirect("reader")
+        if(is_validator):
+            return redirect("validator")
+        if(is_publisher):
+            return redirect("publisher")
+
+        return redirect("creator")
+
+    return render(request,"signin.html")
+
+
+
 def home(request):
     context = {}
     context['address'] = address
@@ -65,8 +90,11 @@ def home(request):
 
     
     news_feed=[]
+    all_news=[]
     news_count = news.functions.newsCount().call()
     print(news_count)
+    for i in range(news_count):
+        all_news.append(news.function.news_feed(i+1).call())
     news_feed.append(news.functions.getFeed().call())
     news_feed=news_feed[0]
     print(news_feed)
@@ -79,6 +107,7 @@ def home(request):
     context['news_count'] = news_count
     context['news_feed'] = news_feed
     context['is_validator'] = is_validator 
+    # context['news']
     print(is_validator)
     # context['news_role'] 
     if(request.method=="POST"):
@@ -91,23 +120,63 @@ def home(request):
 
 def validation_news(request):
     context= {}
+    global address
     context['address']=address
+    print(address)
     news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
     account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
 
-    news_to_valid=news.functions.assignedArticles(address).call()
+    news_to_valid=news.functions.assignedArticle(address).call()
 
     context['news']=news_to_valid
-    print(news_to_valid)
-
+    print(news_to_valid[0])
+    context['news_id']=news_to_valid[0]
     return render(request,'news_to_valid.html',context=context)
 
 def assign_role(request):
     account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+    news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+    if(request.method=="POST"):
+        address=request.POST.get('account')
+        print(address)
+        role=request.POST.get('role')
+        role=int(role)
+        print(news.functions.getFeed().call())
+        account.functions.accountAddRole(address,role).transact(transaction={'from': web3.eth.accounts[0]})
+    return render(request,'assign_role.html')
+
+def assign_news(request):
+    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+    news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
     if(request.method=="POST"):
         address=request.POST.get('account')
         role=request.POST.get('role')
         role=int(role)
-        account.functions.accountAddRole(address,role).transact(transaction={'from': web3.eth.accounts[0]})
-    return render(request,'assign_role.html')
+        print(news.functions.getFeed().call())
+        print(news.functions.news_feed(role).call())
+        print(address)
+        print(role)
+        news.functions.asvalid(address,role).transact(transaction={'from': web3.eth.accounts[0]})
+        print(news.functions.news_feed(role).call())
+        print(news.functions.assignedArticle(address).call())
+        return render(request,'assign_news.html')
+    else:
+        return render(request,'assign_news.html')
+
+def validate(request,id,nid):
+    type=id
+    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+    news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+    if(type==1):
+        news.functions.addUpvote(nid).transact(transaction={'from': web3.eth.accounts[1]})
+    else:
+        news.functions.addUpvote(nid).transact(transaction={'from': web3.eth.accounts[1]})
+    return redirect('news_home')
+
+def report(request,nid):
+    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+    news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+    news.functions.report(nid).transact(transaction={'from': web3.eth.accounts[1]})
+    return redirect('news_home')
+
     

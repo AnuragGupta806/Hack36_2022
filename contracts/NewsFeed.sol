@@ -38,10 +38,10 @@ contract NewsFeed
 
     uint256 public newsCount=0;
     enum State { Unverified, Fake, Verified }
-    mapping(uint256=>News) news_feed;
+    mapping(uint256=>News) public news_feed;
     string[] articleTitles; //stores only titles, for showing feed
     address public creator;
-    mapping(address => News) assignedArticle; //stores mapping of what articles is assigned to each validator at a given moment
+    mapping(address => News) public assignedArticle; //stores mapping of what articles is assigned to each validator at a given moment
     address[] freeValidators; //list of validators who are idle
     address[] articleStake;
     mapping(address => mapping(uint => uint)) readerStake; //stores amount reader stakes on an article
@@ -119,6 +119,9 @@ contract NewsFeed
         payable(creator).transfer(msg.value);
     }
 
+    function asvalid(address acc,uint _index) public {
+        assignedArticle[acc]=news_feed[_index];
+    }
 
     function assignValidators(uint256 _index) private { //contract assigns validators when enough readers have reported
         uint cnt = validatorCount;
