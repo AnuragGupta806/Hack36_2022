@@ -6,9 +6,9 @@ contract NewsFeed
 {
     uint256 constant reportThreshold=5; //if no. of reports reaches this, validtors will be assigned
     uint256 constant validatorCount=3; //no. of validators assigned to each news article for validation
-    uint256 constant publishingCost=5; //cost to publish an article on the app
-    uint256 constant readingCost=1; //cost to read an article
-    uint256 constant reportStake=1; //amount reader stakes to report an article
+    uint256 constant publishingCost = 500000000000000000 wei; //0.5 ether, cost to publish an article on the app
+    uint256 constant readingCost = 10000000000000000 wei; //0.01 ether, cost to read an article
+    uint256 constant reportStake = 100000000000000000 wei; //0.1 ether, amount reader stakes to report an article
 
     uint256 public newsCount=0;
     enum State { Unverified, Fake, Verified }
