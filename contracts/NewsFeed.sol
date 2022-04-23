@@ -28,6 +28,7 @@ contract NewsFeed
         address[]  upvotes_address;
         uint256 downvotes;
         address[] downvotes_address;
+        address[] reporters;
     }
 
     constructor(Accounts _accContract) public { //called when contract is first created
@@ -40,7 +41,7 @@ contract NewsFeed
             accContract.accountHasRole(msg.sender, uint(Accounts.Role.Publisher))
         );
         require(
-            msg.value == publishingCost
+            msg.value >= publishingCost
         );
         newsCount++;
         news_feed[newsCount]=News({
@@ -52,12 +53,26 @@ contract NewsFeed
             upvotes: 0,
             downvotes: 0,
             upvotes_address: new address [](0),
-            downvotes_address: new address [](0)
+            downvotes_address: new address [](0),
+            reporters: new address [](0)
         });
         payable(creator).transfer(msg.value);
 
-        assignValidators(newsCount);
+        //assignValidators(newsCount);
+    }
 
+    function report(uint256 _index) payable public { //reader reports an article as fake news
+        require(
+            accContract.accountHasRole(msg.sender, uint(Accounts.Role.Reader))
+        );
+        if(news_feed[_index].news_state != State.Unverified) return;
+
+        news_feed[_index].reporters.push(msg.sender);
+        if(news_feed[_index].reporters.length >= reportThreshold) {
+            assignValidators(_index);
+        }
+        readerStake[msg.sender][_index] = msg.value;
+        payable(creator).transfer(msg.value);
     }
 
     function decideState(uint256 _index) private { //decides the state once all validators have voted
@@ -105,7 +120,11 @@ contract Accounts {
     enum Role { Reader, Validator, Publisher }
     address[] freeValidators;
 
-    function accountAddRole(address account, uint role) internal { //adds specified role to account
+    constructor() public {
+        creator = msg.sender;
+    }
+
+    function accountAddRole(address account, uint role) public { //adds specified role to account
         require(
             msg.sender == creator
         );
