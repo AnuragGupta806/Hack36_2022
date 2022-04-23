@@ -60,13 +60,14 @@ def home(request):
     account.functions.accountAddRole(web3.eth.accounts[1],2).transact(transaction={'from': web3.eth.accounts[0]})
     print(account.functions.accountHasRole(web3.eth.accounts[1],2).call())
     
-    news.functions.addNews("hasjkdhkas","hasjhjkasdnj").transact(transaction={'from': web3.eth.accounts[1],"value": 5})
+    # news.functions.addNews("hasjkdhkas","hasjhjkasdnj").transact(transaction={'from': web3.eth.accounts[1],"value": 5})
 
     
     news_feed=[]
     news_count = news.functions.newsCount().call()
     print(news_count)
     news_feed.append(news.functions.getFeed().call())
+    news_feed=news_feed[0]
     print(news_feed)
     # for i in range(news_count):
 

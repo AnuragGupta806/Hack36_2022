@@ -77,7 +77,7 @@ bal = web3.eth.get_balance(address)
 print(web3.fromWei(bal, 'ether'))
 
 tx_hash = NewsContract.constructor(acc_address).transact(transaction={'from': web3.eth.accounts[1]})
-print(tx_hash)
+# print(tx_hash)
 
 tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
 news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
