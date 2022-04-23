@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.21 <8.10.0;
-pragma experimental ABIEncoderV2;
+pragma abicoder v2;
 
 contract Accounts {
     address public creator;
@@ -33,8 +33,9 @@ contract NewsFeed
 {
     uint256 constant reportThreshold=5; //if no. of reports reaches this, validtors will be assigned
     uint256 constant validatorCount=3; //no. of validators assigned to each news article for validation
-    uint256 constant publishingCost=2; //cost to publish an article on the app
-    uint256 constant readingCost=1; //cost to read an article
+    uint256 constant publishingCost = 500000000000000000 wei; //0.5 ether, cost to publish an article on the app
+    uint256 constant readingCost = 10000000000000000 wei; //0.01 ether, cost to read an article
+    uint256 constant reportStake = 100000000000000000 wei; //0.1 ether, amount reader stakes to report an article
 
     uint256 public newsCount=0;
     enum State { Unverified, Fake, Verified }
@@ -87,7 +88,7 @@ contract NewsFeed
             reporters: new address [](0)
         });
         articleTitles.push(_title);
-        payable(creator).transfer(msg.value);
+        //payable(creator).transfer(msg.value);
     }
 
     function getFeed() public returns (string[] memory) {
@@ -101,7 +102,6 @@ contract NewsFeed
         require(
             msg.value >= readingCost
         );
-        payable(creator).transfer(msg.value);
         return news_feed[_index];
     }
 
@@ -116,7 +116,6 @@ contract NewsFeed
             assignValidators(_index); //assuming for now there are always enough validators
         }
         readerStake[msg.sender][_index] = msg.value;
-        payable(creator).transfer(msg.value);
     }
 
     function asvalid(address acc,uint _index) public {
@@ -163,11 +162,18 @@ contract NewsFeed
     function decideState(uint256 _index) private { //decides the state once all validators have voted
         if(news_feed[_index].upvotes > news_feed[_index].downvotes) {
             news_feed[_index].news_state = State.Verified;
+
+            uint totalStake = news_feed[_index].reporters.length * reportStake;
+            payable(news_feed[_index].publisher).transfer(totalStake);
         }
         else {
             news_feed[_index].news_state = State.Fake;
+
+            uint amtToEachReporter = publishingCost / reportThreshold;
+            for(uint i = 0; i < news_feed[_index].reporters.length; i++) {
+                payable(news_feed[_index].reporters[i]).transfer(amtToEachReporter);
+            }
         }
     }
 }
-
 
