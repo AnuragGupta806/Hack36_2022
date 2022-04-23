@@ -138,18 +138,6 @@ contract NewsFeed
             news_feed[_index].news_state = State.Fake;
         }
     }
-
-    function getNews(uint256 _index) public view returns(News memory){
-        return news_feed[_index];
-    }
-
-    function getAllNews() public view returns (News[] memory){
-        News[] memory all_news = new News[](newsCount);
-        for(uint i=0;i<newsCount;i++){
-            all_news[i] = news_feed[i];
-        }
-        return all_news;
-    }
 }
 
 
