@@ -35,11 +35,12 @@ abi_news = json.loads(compiled_sol["contracts"]["NewsFeed.sol"]["NewsFeed"]["met
 abi_acc = json.loads(compiled_sol["contracts"]["NewsFeed.sol"]["Accounts"]["metadata"])["output"]["abi"]
 acc_bytecode = compiled_sol["contracts"]["NewsFeed.sol"]["Accounts"]["evm"]["bytecode"]["object"]
 
-address = "0xf568C8059Ea2a38B9693E5f77902699AaE0e8886"
+# address = "0xf568C8059Ea2a38B9693E5f77902699AaE0e8886"
+
 
 url = "HTTP://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(url))
-
+address =  web3.eth.accounts[1]
 NewsContract = web3.eth.contract(abi = abi_news,bytecode=news_bytecode)
 AccContract = web3.eth.contract(abi = abi_acc,bytecode=acc_bytecode)
 
@@ -78,6 +79,7 @@ def home(request):
     context['news_count'] = news_count
     context['news_feed'] = news_feed
     context['is_validator'] = is_validator 
+    print(is_validator)
     # context['news_role'] 
     if(request.method=="POST"):
         title=request.POST.get('title')
@@ -99,3 +101,13 @@ def validation_news(request):
     print(news_to_valid)
 
     return render(request,'news_to_valid.html',context=context)
+
+def assign_role(request):
+    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+    if(request.method=="POST"):
+        address=request.POST.get('account')
+        role=request.POST.get('role')
+        role=int(role)
+        account.functions.accountAddRole(address,role).transact(transaction={'from': web3.eth.accounts[0]})
+    return render(request,'assign_role.html')
+    
