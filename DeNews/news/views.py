@@ -71,13 +71,13 @@ def home(request):
     print(news_feed)
     # for i in range(news_count):
     role = []
-     
 
+    is_validator=account.functions.accountHasRole(address,1).call()
     context['acc_tx'] = acc_tx_receipt
     context['news_tx'] = tx_receipt
     context['news_count'] = news_count
     context['news_feed'] = news_feed
-    context['news_role'] 
+    context['is_validator'] = is_validator 
     if(request.method=="POST"):
         title=request.POST.get('title')
         description=request.POST.get('description')
@@ -85,3 +85,16 @@ def home(request):
         return render(request,'home.html',context)
     return render(request,'home.html',context)
 
+
+def validation_news(request):
+    context= {}
+    context['address']=address
+    news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+
+    news_to_valid=news.functions.assignedArticles(address).call()
+
+    context['news']=news_to_valid
+    print(news_to_valid)
+
+    return render(request,'news_to_valid.html',context=context)
