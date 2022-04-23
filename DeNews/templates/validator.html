@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-
+<div class="container mt-5">
+    <h1>You have validate following news</h1>
+    {% if news_id == 0 %}
+    <h4>there is no news assigned to you for validation</h4>
+    {% else %}
+    {{news}}
+    <a href="{% url 'validate' id=1 nid=news_id %}"><button class="btn btn-primary">True</button></a>
+    <a href="{% url 'validate' id=0 nid=news_id %}"><button class="btn btn-primary">False</button></a>
+    {% endif %}
+</div>
 {% endblock %}

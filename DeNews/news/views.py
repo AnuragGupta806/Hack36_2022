@@ -6,6 +6,7 @@ from solcx import compile_standard, install_solc
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.contrib import messages
 install_solc("0.8.0")
 
 # Create your views here.
@@ -57,7 +58,7 @@ tx_receipt = web3.eth.wait_for_transaction_receipt(news_tx_hash)
 def index(request):
     if request.method=="POST":
         address = request.POST.get('address')
-        news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+        # news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
         account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
         is_reader = account.functions.accountHasRole(address,0).call()
         is_validator = account.functions.accountHasRole(address,1).call()
@@ -117,6 +118,25 @@ def home(request):
         return render(request,'home.html',context)
     return render(request,'home.html',context)
 
+def createNews(request):
+    context = {}
+    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+    news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+    if(request.method=="POST"):
+        title=request.POST.get('title')
+        description=request.POST.get('description')
+        account.functions.accountAddRole(web3.eth.accounts[1],2).transact(transaction={'from': web3.eth.accounts[0]})
+        print(account.functions.accountHasRole(web3.eth.accounts[1],2).call())
+        # news.functions.addNews(title,description).transact(transaction={'from': web3.eth.accounts[1],"value": 6})
+        if account.functions.accountHasRole(web3.eth.accounts[1],2).call():
+            news.functions.addNews(title,description).transact(transaction={'from': web3.eth.accounts[1],"value": 5})
+            messages.success(request,"News added successfully with 5 ether stake")
+        else:
+            messages.warning(request,"Insufficient Permission")
+        return redirect('publisher')
+    news_count = news.functions.newsCount().call()
+    print(news_count)
+    return render(request,'create_news.html')
 
 def validation_news(request):
     context= {}
@@ -143,6 +163,7 @@ def assign_role(request):
         role=int(role)
         print(news.functions.getFeed().call())
         account.functions.accountAddRole(address,role).transact(transaction={'from': web3.eth.accounts[0]})
+        messages.success(request,"Assignment successfull")
     return render(request,'assign_role.html')
 
 def assign_news(request):
@@ -159,6 +180,7 @@ def assign_news(request):
         news.functions.asvalid(address,role).transact(transaction={'from': web3.eth.accounts[0]})
         print(news.functions.news_feed(role).call())
         print(news.functions.assignedArticle(address).call())
+        messages.success(request,"News assigned successfully")
         return render(request,'assign_news.html')
     else:
         return render(request,'assign_news.html')
@@ -180,3 +202,14 @@ def report(request,nid):
     return redirect('news_home')
 
     
+def readerView(request):
+    return render(request,"reader.html")
+
+def validatorView(request):
+    return render(request,"validator.html")
+
+def publisherView(request):
+    return render(request,"publisher.html")
+
+def creatorView(request):
+    return render(request,"creator.html")

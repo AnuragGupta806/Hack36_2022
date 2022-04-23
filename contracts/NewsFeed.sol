@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.21 <8.10.0;
-pragma abicoder v2;
+pragma experimental ABIEncoderV2;
 
 contract Accounts {
     address public creator;
@@ -88,7 +88,7 @@ contract NewsFeed
             reporters: new address [](0)
         });
         articleTitles.push(_title);
-        //payable(creator).transfer(msg.value);
+        // payable(creator).transfer(msg.value);
     }
 
     function getFeed() public returns (string[] memory) {
