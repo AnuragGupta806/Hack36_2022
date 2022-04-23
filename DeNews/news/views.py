@@ -27,8 +27,8 @@ compiled_sol = compile_standard(
     solc_version="0.8.0",
 )
 
-# with open("compiled_code.json", "w") as file:
-#     json.dump(compiled_sol, file)
+with open("compiled_code.json", "w") as file:
+    json.dump(compiled_sol, file)
 
 news_bytecode = compiled_sol["contracts"]["NewsFeed.sol"]["NewsFeed"]["evm"]["bytecode"]["object"]
 abi_news = json.loads(compiled_sol["contracts"]["NewsFeed.sol"]["NewsFeed"]["metadata"])["output"]["abi"]
