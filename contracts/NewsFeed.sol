@@ -7,10 +7,12 @@ contract NewsFeed
     uint256 constant reportThreshold=5; //if no. of reports reaches this, validtors will be assigned
     uint256 constant validatorCount=3; //no. of validators assigned to each news article for validation
     uint256 constant publishingCost=2; //cost to publish an article on the app
+    uint256 constant readingCost=1; //cost to read an article
 
     uint256 public newsCount=0;
     enum State { Unverified, Fake, Verified }
-    mapping(uint256=>News) public news_feed;
+    mapping(uint256=>News) news_feed;
+    string[] articleTitles; //stores only titles, for showing feed
     address public creator;
     mapping(address => News) assignedArticle; //stores mapping of what articles is assigned to each validator at a given moment
     address[] freeValidators; //list of validators who are idle
@@ -57,9 +59,23 @@ contract NewsFeed
             downvotes_address: new address [](0),
             reporters: new address [](0)
         });
+        articleTitles.push(_title);
         payable(creator).transfer(msg.value);
+    }
 
-        //assignValidators(newsCount);
+    function getFeed() public returns (string[] memory) {
+        return articleTitles;
+    }
+
+    function readNews(uint256 _index) public payable returns (News memory) {
+        require(
+            accContract.accountHasRole(msg.sender, uint(Accounts.Role.Reader))
+        );
+        require(
+            msg.value >= readingCost
+        );
+        payable(creator).transfer(msg.value);
+        return news_feed[_index];
     }
 
     function report(uint256 _index) payable public { //reader reports an article as fake news
@@ -70,19 +86,10 @@ contract NewsFeed
 
         news_feed[_index].reporters.push(msg.sender);
         if(news_feed[_index].reporters.length >= reportThreshold) {
-            assignValidators(_index);
+            assignValidators(_index); //assuming for now there are always enough validators
         }
         readerStake[msg.sender][_index] = msg.value;
         payable(creator).transfer(msg.value);
-    }
-
-    function decideState(uint256 _index) private { //decides the state once all validators have voted
-        if(news_feed[_index].upvotes > news_feed[_index].downvotes) {
-            news_feed[_index].news_state = State.Verified;
-        }
-        else {
-            news_feed[_index].news_state = State.Fake;
-        }
     }
 
 
@@ -97,32 +104,39 @@ contract NewsFeed
     }
 
 
-    function addUpvote(uint256 _index) private { //validator votes as legitmiate news
+    function addUpvote(uint256 _index) public { //validator votes as legitmiate news
         require(
             accContract.accountHasRole(msg.sender, uint(Accounts.Role.Validator))
         );
         news_feed[_index].upvotes_address.push(msg.sender);
         news_feed[_index].upvotes++;
+
+        delete assignedArticle[msg.sender];
+        freeValidators.push(msg.sender);
+
+        if(news_feed[_index].upvotes + news_feed[_index].downvotes == validatorCount) { decideState(_index); }
     }
 
-    function addDownvote(uint256 _index) private { //validator votes as fake news
+    function addDownvote(uint256 _index) public { //validator votes as fake news
         require(
             accContract.accountHasRole(msg.sender, uint(Accounts.Role.Validator))
         );
         news_feed[_index].downvotes_address.push(msg.sender);
         news_feed[_index].downvotes++;
+
+        delete assignedArticle[msg.sender];
+        freeValidators.push(msg.sender);
+
+        if(news_feed[_index].upvotes + news_feed[_index].downvotes == validatorCount) { decideState(_index); }
     }
 
-    function getNews(uint256 _index) public view returns(News memory){
-        return news_feed[_index];
-    }
-
-    function getAllNews() public view returns (News[] memory){
-        News[] memory all_news = new News[](newsCount);
-        for(uint i=0;i<newsCount;i++){
-            all_news[i] = news_feed[i];
-        } 
-        return all_news;
+    function decideState(uint256 _index) private { //decides the state once all validators have voted
+        if(news_feed[_index].upvotes > news_feed[_index].downvotes) {
+            news_feed[_index].news_state = State.Verified;
+        }
+        else {
+            news_feed[_index].news_state = State.Fake;
+        }
     }
 }
 
