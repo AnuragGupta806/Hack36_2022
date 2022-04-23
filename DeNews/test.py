@@ -1,4 +1,3 @@
-from calendar import c
 import json
 from web3 import Web3
 from solcx import compile_standard, install_solc
@@ -33,19 +32,57 @@ compiled_sol = compile_standard(
 with open("compiled_code.json", "w") as file:
     json.dump(compiled_sol, file)
 
-bytecode = compiled_sol["contracts"]["NewsFeed.sol"]["NewsFeed"]["evm"]["bytecode"]["object"]
-abi = abi = json.loads(compiled_sol["contracts"]["NewsFeed.sol"]["NewsFeed"]["metadata"])["output"]["abi"]
+news_bytecode = compiled_sol["contracts"]["NewsFeed.sol"]["NewsFeed"]["evm"]["bytecode"]["object"]
+abi_news = json.loads(compiled_sol["contracts"]["NewsFeed.sol"]["NewsFeed"]["metadata"])["output"]["abi"]
+abi_acc = json.loads(compiled_sol["contracts"]["NewsFeed.sol"]["Accounts"]["metadata"])["output"]["abi"]
+acc_bytecode = compiled_sol["contracts"]["NewsFeed.sol"]["Accounts"]["evm"]["bytecode"]["object"]
 
 # print(bytecode)
 # print(abi)
 url = "HTTP://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(url))
 # print(web3)
-address = "0x9E7D972391e460B1856576D91644d1c3Bd46a0bE"
+address = "0xf568C8059Ea2a38B9693E5f77902699AaE0e8886"
 check_add = web3.isChecksumAddress("0x9E7D972391e460B1856576D91644d1c3Bd46a0bE")
 # abi = json.loads('''[=]''')
 # print(address)
-contract = web3.eth.contract(abi = abi,bytecode=bytecode)
-print(contract)
+NewsContract = web3.eth.contract(abi = abi_news,bytecode=news_bytecode)
+print(NewsContract)
 nonce = web3.eth.getTransactionCount(address)
 print(nonce)
+print(web3.eth.accounts)
+chain_id = 1337
+address = "0xf568C8059Ea2a38B9693E5f77902699AaE0e8886"
+
+bal = web3.eth.get_balance(address)
+print(web3.fromWei(bal, 'ether'))
+
+tx_hash = NewsContract.constructor(address).transact(transaction={'from': web3.eth.accounts[1]})
+print(tx_hash)
+
+tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
+news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+# news.functions.greet().call()
+print(tx_receipt)
+print(news)
+
+
+
+
+AccContract = web3.eth.contract(abi = abi_acc,bytecode=acc_bytecode)
+print(AccContract)
+print(abi_acc)
+# print(NewsContract.functions.storedValue().call())
+
+acc_tx_hash = AccContract.constructor().transact(transaction={'from': web3.eth.accounts[0]})
+print(acc_tx_hash)
+
+acc_tx_receipt = web3.eth.wait_for_transaction_receipt(acc_tx_hash)
+account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+# news.functions.greet().call()
+print(tx_receipt)
+print(account)
+
+account.functions.accountAddRole(web3.eth.accounts[1],2).transact(transaction={'from': web3.eth.accounts[0]})
+
+print(account.functions.accountHasRole(web3.eth.accounts[1],2).call())
