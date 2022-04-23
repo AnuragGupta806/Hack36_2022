@@ -57,6 +57,7 @@ contract NewsFeed
         payable(creator).transfer(msg.value);
 
         assignValidators(newsCount);
+
     }
 
     function decideState(uint256 _index) private { //decides the state once all validators have voted

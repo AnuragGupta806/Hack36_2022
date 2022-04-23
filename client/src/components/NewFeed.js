@@ -7,6 +7,7 @@ export default function NewFeed(){
     const [account, setAccount] = useState(); // state variable to set account.
     const [newsFeed,setNewsFeed]=useState();
     const [news,setNews]=useState([]);
+    const [pr,setPr]=useState([]);
 
     useEffect(() => {
       async function load() {
@@ -33,22 +34,32 @@ export default function NewFeed(){
       }
       load();
      }, []);
-     console.log(news);
+     var showFeed='';
+    for(var i=0;i<news.length;i++)
+       showFeed+=`<li>${news[i]['title']}</li>`
+    
+     const addNews = async()=>{
+        console.log("hello");
+       await newsFeed.methods.addNews("testing","hello").send({from:account});
+       var cr=await newsFeed.methods.newsCount().call();
+       console.log(cr);
+        // console.log(newsFeed.methods.newsCount().call());
+    }
     return (
         <>
         <h1> News Feed</h1>
         <div>
             Your account is: {account}
         </div>
-        <ul>
+        {/* <ul>
       {
         Object.keys(news).map((newt, index) => (
-          <li key={`${newt[index].title}-${index}`}>
-            <h4>{newt[index].title}</h4>
-          </li>
+            <h4>{newt['title']}</h4>
         ))
       }
-      </ul>
+      </ul> */}
+        <ul dangerouslySetInnerHTML={{__html: showFeed}}></ul>
+        <button onClick={addNews}>Add News</button>
         </>
     )
 }
