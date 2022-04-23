@@ -28,17 +28,23 @@ export default function NewFeed(){
       for (var i = 1; i <= counter; i++) {
         // call the contacts method to get that particular contact from smart contract
         const newt = await instance.methods.news_feed(i).call();
-        await instance.methods.addNews("test11","ttfdg");
         // add recently fetched contact to state variable.
         setNews((news) => news.concat(newt));
       }
       }
       load();
      }, []);
-     console.log("news",news);
      var showFeed='';
     for(var i=0;i<news.length;i++)
        showFeed+=`<li>${news[i]['title']}</li>`
+    
+     const addNews = async()=>{
+        console.log("hello");
+       await newsFeed.methods.addNews("testing","hello").send({from:account});
+       var cr=await newsFeed.methods.newsCount().call();
+       console.log(cr);
+        // console.log(newsFeed.methods.newsCount().call());
+    }
     return (
         <>
         <h1> News Feed</h1>
@@ -53,6 +59,7 @@ export default function NewFeed(){
       }
       </ul> */}
         <ul dangerouslySetInnerHTML={{__html: showFeed}}></ul>
+        <button onClick={addNews}>Add News</button>
         </>
     )
 }

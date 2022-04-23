@@ -67,7 +67,7 @@ contract NewsFeed
             downvotes_address: new address [](0),
             reportCount: 0
         });
-        payable(creator).transfer(msg.value);
+        // payable(creator).transfer(msg.value);
     }
 
     function decideState(uint256 _index) private { //decides the state once all validators have voted
@@ -91,7 +91,7 @@ contract NewsFeed
             assignValidators(_index);
         }
         readerStake[msg.sender][_index] = msg.value;
-        payable(creator).transfer(msg.value);
+        // payable(creator).transfer(msg.value);
     }
 
     function assignValidators(uint256 _index) private { //contract assigns validators when enough readers have reported
