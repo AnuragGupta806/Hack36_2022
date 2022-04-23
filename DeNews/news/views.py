@@ -36,28 +36,39 @@ abi_acc = json.loads(compiled_sol["contracts"]["NewsFeed.sol"]["Accounts"]["meta
 acc_bytecode = compiled_sol["contracts"]["NewsFeed.sol"]["Accounts"]["evm"]["bytecode"]["object"]
 
 address = "0xf568C8059Ea2a38B9693E5f77902699AaE0e8886"
+
 url = "HTTP://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(url))
+
+NewsContract = web3.eth.contract(abi = abi_news,bytecode=news_bytecode)
+AccContract = web3.eth.contract(abi = abi_acc,bytecode=acc_bytecode)
+
+acc_tx_hash = AccContract.constructor().transact(transaction={'from': web3.eth.accounts[0]})
+acc_tx_receipt = web3.eth.wait_for_transaction_receipt(acc_tx_hash)
+
+news_tx_hash = NewsContract.constructor(acc_tx_receipt.contractAddress).transact(transaction={'from': web3.eth.accounts[1]})
+tx_receipt = web3.eth.wait_for_transaction_receipt(news_tx_hash)
+
 
 def home(request):
     context = {}
     context['address'] = address
-    NewsContract = web3.eth.contract(abi = abi_news,bytecode=news_bytecode)
-    AccContract = web3.eth.contract(abi = abi_acc,bytecode=acc_bytecode)
 
-    news_tx_hash = NewsContract.constructor(address).transact(transaction={'from': web3.eth.accounts[1]})
-    acc_tx_hash = AccContract.constructor().transact(transaction={'from': web3.eth.accounts[0]})
-
-    tx_receipt = web3.eth.wait_for_transaction_receipt(news_tx_hash)
     news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
 
+    account.functions.accountAddRole(web3.eth.accounts[1],2).transact(transaction={'from': web3.eth.accounts[0]})
+    print(account.functions.accountHasRole(web3.eth.accounts[1],2).call())
+    
+    news.functions.addNews("hasjkdhkas","hasjhjkasdnj").transact(transaction={'from': web3.eth.accounts[1],"value": 5})
+
+    
     news_feed=[]
     news_count = news.functions.newsCount().call()
     print(news_count)
-    for i in range(news_count):
-        news_feed.append(news.functions.news_feed(i).call())
-    acc_tx_receipt = web3.eth.wait_for_transaction_receipt(acc_tx_hash)
-    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+    news_feed.append(news.functions.getFeed().call())
+    print(news_feed)
+    # for i in range(news_count):
 
     context['acc_tx'] = acc_tx_receipt
     context['news_tx'] = tx_receipt
