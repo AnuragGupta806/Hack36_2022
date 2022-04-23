@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.21 <8.10.0;
-pragma experimental ABIEncoderV2;
+pragma abicoder v2;
 
 contract NewsFeed
 {
     uint256 constant reportThreshold=5; //if no. of reports reaches this, validtors will be assigned
     uint256 constant validatorCount=3; //no. of validators assigned to each news article for validation
-    uint256 constant publishingCost=2; //cost to publish an article on the app
+    uint256 constant publishingCost=5; //cost to publish an article on the app
     uint256 constant readingCost=1; //cost to read an article
+    uint256 constant reportStake=1; //amount reader stakes to report an article
 
     uint256 public newsCount=0;
     enum State { Unverified, Fake, Verified }
@@ -133,9 +134,15 @@ contract NewsFeed
     function decideState(uint256 _index) private { //decides the state once all validators have voted
         if(news_feed[_index].upvotes > news_feed[_index].downvotes) {
             news_feed[_index].news_state = State.Verified;
+
+            uint totalStake = news_feed[_index].reporters.length * reportStake;
+            //$send this amount to publisher$
         }
         else {
             news_feed[_index].news_state = State.Fake;
+
+            uint amtToEachReporter = publishingCost / reportThreshold;
+            //$send this amount to each reporter$
         }
     }
 }
@@ -162,7 +169,7 @@ contract Accounts {
         }
     }
 
-    function accountHasRole(address account, uint role) public view returns (bool) { //checks whether account has specified role
+    function accountHasRole(address account, uint role) public returns (bool) { //checks whether account has specified role
         return accountRoles[account][role];
     }
 }
