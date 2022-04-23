@@ -51,9 +51,17 @@ def home(request):
     tx_receipt = web3.eth.wait_for_transaction_receipt(news_tx_hash)
     news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
 
+    news_feed=[]
+    news_count = news.functions.newsCount().call()
+    print(news_count)
+    for i in range(news_count):
+        news_feed.append(news.functions.news_feed(i).call())
     acc_tx_receipt = web3.eth.wait_for_transaction_receipt(acc_tx_hash)
     account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
 
     context['acc_tx'] = acc_tx_receipt
     context['news_tx'] = tx_receipt
+    context['news_count'] = news_count
+    context['news_feed'] = news_feed
     return render(request,'home.html',context)
+

@@ -16,6 +16,12 @@
     <p>your address is {{address}}</p>
     <p>Account transaction {{acc_tx}}</p>
     <p>News transactions is {{news_tx}}</p>
+
+    <p>Number of news: {{news_count}}</p>
+    
+    {% for new in news %}
+      {{new}}
+    {% endfor %}
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
