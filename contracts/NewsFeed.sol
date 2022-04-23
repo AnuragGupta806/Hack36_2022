@@ -2,6 +2,33 @@
 pragma solidity >=0.4.21 <8.10.0;
 pragma abicoder v2;
 
+contract Accounts {
+    address public creator;
+    mapping(address => mapping(uint => bool)) accountRoles;
+    enum Role { Reader, Validator, Publisher }
+    address[] freeValidators;
+
+    constructor() public {
+        creator = msg.sender;
+    }
+
+    function accountAddRole(address account, uint role) public { //adds specified role to account
+        require(
+            msg.sender == creator
+        );
+        accountRoles[account][role] = true;
+
+        if(role == uint(Role.Validator)) {
+            freeValidators.push(account);
+        }
+    }
+
+    function accountHasRole(address account, uint role) public view returns (bool) { //checks whether account has specified role
+        return accountRoles[account][role];
+    }
+}
+
+
 contract NewsFeed
 {
     uint256 constant reportThreshold=5; //if no. of reports reaches this, validtors will be assigned
@@ -147,29 +174,3 @@ contract NewsFeed
     }
 }
 
-
-contract Accounts {
-    address public creator;
-    mapping(address => mapping(uint => bool)) accountRoles;
-    enum Role { Reader, Validator, Publisher }
-    address[] freeValidators;
-
-    constructor() public {
-        creator = msg.sender;
-    }
-
-    function accountAddRole(address account, uint role) public { //adds specified role to account
-        require(
-            msg.sender == creator
-        );
-        accountRoles[account][role] = true;
-
-        if(role == uint(Role.Validator)) {
-            freeValidators.push(account);
-        }
-    }
-
-    function accountHasRole(address account, uint role) public returns (bool) { //checks whether account has specified role
-        return accountRoles[account][role];
-    }
-}

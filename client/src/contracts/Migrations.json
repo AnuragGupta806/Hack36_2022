@@ -17,7 +17,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -30,7 +31,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -174,7 +176,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 655,
+                        "referencedDeclaration": 727,
                         "src": "196:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -280,7 +282,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 655,
+                        "referencedDeclaration": 727,
                         "src": "266:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -637,7 +639,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 655,
+                                  "referencedDeclaration": 727,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -775,7 +777,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 655,
+                                  "referencedDeclaration": 727,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -973,12 +975,13 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x791CE955192A0387F1D0440321E35dfd99C6e36D",
-      "transactionHash": "0x70f399ae17a79da87f4a5734c4a0d086715d90df8b6f129dd1a36712dcd76657"
+      "address": "0x37854b15C2D8982F0B34da7300bf7A6984821971",
+      "transactionHash": "0x3a244d2e92e59b9efc04f4eb6613cea14686708fb8dc68a8440bdfe0f263dbbc"
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-04-23T08:04:29.250Z",
+  "updatedAt": "2022-04-23T11:32:55.194Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },
