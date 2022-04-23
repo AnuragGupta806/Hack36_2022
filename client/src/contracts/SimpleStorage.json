@@ -38,7 +38,7 @@
   "sourceMap": "67:176:3:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;67:176:3;;;;;;;",
   "deployedSourceMap": "67:176:3:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;67:176:3;;;;;;;;;;;;;;;;;;;;;;;;114:53;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;114:53:3;;;;;;;;;;;;;;;;;:::i;:::-;;171:70;;;:::i;:::-;;;;;;;;;;;;;;;;;;;114:53;161:1;148:10;:14;;;;114:53;:::o;171:70::-;207:4;226:10;;219:17;;171:70;:::o",
   "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.4.21 <8.10.0;\n\ncontract SimpleStorage {\n  uint storedData;\n\n  function set(uint x) public {\n    storedData = x;\n  }\n\n  function get() public view returns (uint) {\n    return storedData;\n  }\n}\n",
-  "sourcePath": "C:\\Users\\leolo\\OneDrive\\Desktop\\hack36\\contracts\\SimpleStorage.sol",
+  "sourcePath": "/Users/siddheshpatil/WebstormProjects/Hack36_2022/contracts/SimpleStorage.sol",
   "ast": {
     "absolutePath": "project:/contracts/SimpleStorage.sol",
     "exportedSymbols": {
@@ -601,12 +601,13 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x6dE5546C1662Ca84b558BeFE329184ac04a07371",
-      "transactionHash": "0x2309f5a50e43bf617b5ad9be0abdef41663b74e067ea96fd63c52af8144f2261"
+      "address": "0xb8c91320F3E4A199a6309420dd46D9A75679c222",
+      "transactionHash": "0x46edb119b9b5287aac56dcdb101ca329380cc639721210224d4740c816f0fd97"
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-04-22T18:27:08.630Z",
+  "updatedAt": "2022-04-23T01:20:05.569Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },
