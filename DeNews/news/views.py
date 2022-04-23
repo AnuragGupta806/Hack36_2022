@@ -75,5 +75,9 @@ def home(request):
     context['news_tx'] = tx_receipt
     context['news_count'] = news_count
     context['news_feed'] = news_feed
+    if(request.method=="POST"):
+        title=request.POST.get('title')
+        description=request.POST.get('description')
+        print(title,description)
     return render(request,'home.html',context)
 
