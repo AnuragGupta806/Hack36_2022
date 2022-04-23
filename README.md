@@ -27,7 +27,7 @@
 
 ## Contributors:
 
-Team Name: NP Devs
+Team Name: Still Deciding ... 
 
 * [Siddhesh Sunil Patil](https://github.com/siddheshpatil777)
 * [Divyansh Upadhyay](https://github.com/DuP-491)
