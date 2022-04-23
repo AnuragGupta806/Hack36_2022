@@ -78,6 +78,7 @@ def home(request):
     context['news_count'] = news_count
     context['news_feed'] = news_feed
     context['is_validator'] = is_validator 
+    # context['news_role'] 
     if(request.method=="POST"):
         title=request.POST.get('title')
         description=request.POST.get('description')
