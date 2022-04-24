@@ -6,13 +6,16 @@
 
 
 ## Introduction:
-  Intro of the project
+  The problem we are solving is creating a moderation service over a news sharing application. A central moderation service is prone to opacity and censorship.
+
+To tackle this, our main idea is to make the news sharing application with decentralized moderation with the help of smart contracts and the blockchain, with a history of all articles published on it. Here the publishers can publish any news with a stake on it and the readers can flag fake news with their stake on flagging the news is sent to the validators who decide the authenticity of the news and the stake amount is distributed among the validators, and reader/publisher depending on the outcome.
+
   
 ## Demo Video Link:
   <a href="">video link here</a>
   
 ## Presentation Link:
-  <a href=""> PPT link here </a>
+  <a href=""> https://docs.google.com/presentation/d/11LMu8dOMdEXF4fjLckJG1txzMrMkbUYoeRy6QD3QIjk/edit?usp=sharing </a>
   
   
 ## Table of Contents:
