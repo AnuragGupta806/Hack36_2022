@@ -10,6 +10,12 @@
 
 To tackle this, our main idea is to make the news sharing application with decentralized moderation with the help of smart contracts and the blockchain, with a history of all articles published on it. Here the publishers can publish any news with a stake on it and the readers can flag fake news with their stake on flagging the news is sent to the validators who decide the authenticity of the news and the stake amount is distributed among the validators, and reader/publisher depending on the outcome.
 
+## Proposed Solution:
+In the network there are there 3 types of roles: Publisher,Reader and Validator
+
+To tackle this, our main idea is to make the news sharing application with decentralized moderation with the help of smart contracts and the blockchain, with a history of all articles published on it. Here the publishers can publish any news with a stake on it and the readers can flag fake news with their stake on flagging the news is sent to the validators who decide the authenticity of the news and the stake amount is distributed among the validators, and reader/publisher depending on the outcome
+
+
   
 ## Demo Video Link:
   <a href="">video link here</a>
@@ -21,10 +27,11 @@ To tackle this, our main idea is to make the news sharing application with decen
 ## Table of Contents:
 
 ## Technology Stack:
-  1) Ethereum
-  2) Django
-  3) Web3
-  4) BlockChain
+  1) Solidity (language to write and deploy smart contract)
+  2) Django (to interact with web3.py and serve content to frontend)
+  3) Web3 (To interact with blockchain network using metamask)
+  4) Ganche (Local blockchain envionment)
+  5) MetaMask (Wallet for )
 
   
 

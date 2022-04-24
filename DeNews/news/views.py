@@ -94,8 +94,6 @@ def home(request):
     all_news=[]
     news_count = news.functions.newsCount().call()
     print(news_count)
-    for i in range(news_count):
-        all_news.append(news.function.news_feed(i+1).call())
     news_feed.append(news.functions.getFeed().call())
     news_feed=news_feed[0]
     print(news_feed)
