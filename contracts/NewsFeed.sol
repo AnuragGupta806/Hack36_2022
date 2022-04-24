@@ -69,10 +69,10 @@ contract NewsFeed
 
     function addNews (string memory _title, string memory _description) payable public { //adds a news article
         require(
-            accContract.accountHasRole(msg.sender, uint(Accounts.Role.Publisher))
+            accContract.accountHasRole(msg.sender, uint(Accounts.Role.Publisher)),"this is wrong"
         );
         require(
-            msg.value >= publishingCost
+            msg.value >= publishingCost, "condition fails"
         );
         newsCount++;
         news_feed[newsCount]=News({

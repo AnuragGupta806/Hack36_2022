@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-      <label for="exampleFormControlInput1" class="form-label">title</label>
-      <input  class="form-control" name="account" id="exampleFormControlInput1" placeholder="account">
-    </div>
-    <div class="mb-3">
-      <label for="exampleFormControlTextarea1" class="form-label">description</label>
-      <textarea class="form-control" name="role" id="exampleFormControlTextarea1" rows="3"></textarea>
-    </div>
-    <button type="submit" class="btn btn-success">Success</button>
-  </form>
+<div class="container">
+  <div class="row  g-4">
+      {% for new in news_feed %}
+      <div class="col s4">
+          <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                  <h5 class="card-title">news</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{new}}</h6>
+                  <a href="{% url 'report' nid=forloop.counter %}"><button type="button" class="btn btn-danger">Report</button></a>
+              </div>
+          </div>
+      </div>
+      {% endfor %}
+  </div>
+</div>
 {% endblock %}

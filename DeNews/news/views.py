@@ -125,17 +125,17 @@ def createNews(request):
     if(request.method=="POST"):
         title=request.POST.get('title')
         description=request.POST.get('description')
-        account.functions.accountAddRole(web3.eth.accounts[1],2).transact(transaction={'from': web3.eth.accounts[0]})
-        print(account.functions.accountHasRole(web3.eth.accounts[1],2).call())
-        # news.functions.addNews(title,description).transact(transaction={'from': web3.eth.accounts[1],"value": 6})
-        if account.functions.accountHasRole(web3.eth.accounts[1],2).call():
-            news.functions.addNews(title,description).transact(transaction={'from': web3.eth.accounts[1],"value": 5})
-            messages.success(request,"News added successfully with 5 ether stake")
-        else:
-            messages.warning(request,"Insufficient Permission")
+        account.functions.accountAddRole(web3.eth.accounts[2],2).transact(transaction={'from': web3.eth.accounts[0]})
+        # print(account.functions.accountHasRole(web3.eth.accounts[1],2).call())
+        news.functions.addNews(title,description).transact(transaction={'from': web3.eth.accounts[2],"value": 500000000000000000})
+        # if account.functions.accountHasRole(web3.eth.accounts[1],2).call():
+        #     news.functions.addNews(title,description).transact(transaction={'from': web3.eth.accounts[1],"value": 5})
+        #     messages.success(request,"News added successfully with 5 ether stake")
+        # else:
+        #     messages.warning(request,"Insufficient Permission")
         return redirect('publisher')
-    news_count = news.functions.newsCount().call()
-    print(news_count)
+    # news_count = news.functions.newsCount().call()
+    # print(news_count)
     return render(request,'create_news.html')
 
 def validation_news(request):
@@ -190,9 +190,9 @@ def validate(request,id,nid):
     account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
     news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
     if(type==1):
-        news.functions.addUpvote(nid).transact(transaction={'from': web3.eth.accounts[1]})
+        news.functions.addUpvote(nid).transact(transaction={'from': web3.eth.accounts[3]})
     else:
-        news.functions.addUpvote(nid).transact(transaction={'from': web3.eth.accounts[1]})
+        news.functions.addUpvote(nid).transact(transaction={'from': web3.eth.accounts[3]})
     return redirect('news_home')
 
 def report(request,nid):
@@ -203,10 +203,50 @@ def report(request,nid):
 
     
 def readerView(request):
-    return render(request,"reader.html")
+    context = {}
+    context['address'] = address
+
+    news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+
+    account.functions.accountAddRole(web3.eth.accounts[1],2).transact(transaction={'from': web3.eth.accounts[0]})
+    print(account.functions.accountHasRole(web3.eth.accounts[1],2).call())
+    
+    # news.functions.addNews("hasjkdhkas","hasjhjkasdnj").transact(transaction={'from': web3.eth.accounts[1],"value": 5})
+
+    
+    news_feed=[]
+    all_news=[]
+    news_count = news.functions.newsCount().call()
+    print(news_count)
+    news_feed.append(news.functions.getFeed().call())
+    news_feed=news_feed[0]
+    print(news_feed)
+    # for i in range(news_count):
+    role = []
+
+    is_validator=account.functions.accountHasRole(address,1).call()
+    context['acc_tx'] = acc_tx_receipt
+    context['news_tx'] = tx_receipt
+    context['news_count'] = news_count
+    context['news_feed'] = news_feed
+    context['is_validator'] = is_validator 
+    return render(request,"reader.html",context=context)
 
 def validatorView(request):
-    return render(request,"validator.html")
+    context= {}
+    global address
+    context['address']=address
+    print(address)
+    news = web3.eth.contract(address=tx_receipt.contractAddress,abi=abi_news)
+    account = web3.eth.contract(address=acc_tx_receipt.contractAddress,abi=abi_acc)
+
+    news_to_valid=news.functions.assignedArticle(address).call()
+
+    context['news']=news_to_valid
+    print(news_to_valid[0])
+    context['news_id']=news_to_valid[0]
+    return render(request,"validator.html",context=context)
 
 def publisherView(request):
     return render(request,"publisher.html")
